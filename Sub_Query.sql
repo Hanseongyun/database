@@ -10,6 +10,7 @@ WHERE department_code = (
 );
 
 -- FROM 절에서의 서브쿼리: 쿼리 결과 테이블을 다시 FROM절에 사용하여 복합적인 테이블 조회
+-- 반드시 서브쿼리 결과에 대한 이름이 필요함 AS사용
 SELECT * 
 FROM (
 	SELECT name AS employee_name, department_code

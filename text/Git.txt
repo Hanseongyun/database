@@ -1,0 +1,69 @@
+명령어
+clear: 터미널 화면 지우기
+pwd: 터미널의 현재 경로(위치)를 표시
+ls : 현재 폴더의 파일 혹은 폴더 리스트를 보여줌
+	- : 옵션 추가 명령어
+	a : 모든 파일 및 폴더를 보여줌
+	l : 파일 혹은 폴더의 상세 정보를 보여줌
+	al or la : a+l
+
+-rwx (1) / rwx (2) / rwx (3)
+1 rwx : 소유주(사용자)에 대한 권한
+2 rwx : 소유그룹에 대한 권한
+3 rwx : 기타 타인
+r : 읽기권한 / w : 작성권한 / x : 실행권한
+
+cd : 폴더 이동
+/ : 현재 위치
+. : 뒤(이전)   ../ 뒤로이동
+~ : 홈디렉토리
+
+적다가 tab 누르면 자동완성, 방향키 위아래로 이전입력기록
+
+mkdir 폴더명 : 폴더 생성 명령어
+rm 파일/폴더명 : 파일 혹은 폴더를 삭제
+	r옵션 : 폴더안에 있는 하위 폴더와 파일까지 모두삭제
+
+vim 파일명(확장자포함) : vim editor를 사용하여 파일 생성 
+		     : vim editor를 사용하여 파일 열기
+ 	vim editor 실행 직후는 읽기 모드임 > 쓰기모드로 변경
+	(i or a키 - 읽기모드, esc - 다시읽기 모드로,  
+	읽기모드에서 파일을 저장 및 종료-  :w-저장, :q-종료, :wq-저장후종료, :q! 저장하지 않고 종료(강제종료)
+
+cat 파일명 : 터미널 상의 텍스트 파일 보기(내용을 화면에 출력)
+
+git config --global user.name "Hanseongyun"
+git config --global user.email "han832793@gmail.com"
+$ git config --global user.name
+$ git config --global user.email
+
+워킹트리(working tree) -스테이지(stage)-리포지토리(repository)
+
+git add : 워킹트리->스테이지
+git add . : 워킹트리의 모든파일을 스테이지로
+git commit -m : 작업확정 스테이지 > 리포지토리(여기들어오면 추적됨)
+git log : 모든 작업로그 출력
+
+폴더위치, 브랜치위치 항상 확인할것
+
+git branch 브랜치명 : 브랜치 생성 
+git branch : 현재 브랜치 출력
+git checkout 브랜치명 : 해당 브랜치로 이동
+git merge 브랜치명 : 메인브랜치에 병합(메인브랜치로 이동후 입력)   병합하는 순간 커밋생성
+		   sub1브랜치는 남아있음
+git branch -d 브랜치명 : 브랜치삭제 (충돌방지를 위해 병합후에는 브랜치 삭제하는것이 좋음)
+
+
+git remote add 리포지토리이름 리포지토리주소
+shift + Insert = 붙여넣기
+git remote show 리포지토리이름 : URL주소출력
+git push 리포지토리이름 브랜치명 : 리포지토리에 브랜치생성
+git push -u 리포지토리 이름 브랜치명 : 다음 푸쉬부터는 반드시 지정한 리포지토리이름 브랜치명으로 푸쉬함
+-> git push만 입력해도 해당 리포지토리이름 브랜치명으로 푸쉬됨
+git clone 깃허브주소 
+
+git pull 리포지토리명 브랜치 : 외부리포지토리 변경 상태를 받아옴(단, 반드시 로컬 브랜치가 커밋이 되어있는 상태)
+
+P!ssw0rd
+
+https://www.w3schools.com/
