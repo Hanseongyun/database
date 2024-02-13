@@ -1,0 +1,17 @@
+erd를 제공 
+create 부터
+join, view, index
+권한 table 생성
+
+sql로만 옮기는 
+dml 13~15문제
+table 5개
+dcl  user2개 권한부여
+view
+
+1:다 다에 참조키생성
+다:다 새로운테이블
+
+join 작업 1~2개?
+view 로만드는거  view 로 검색
+삽입 수정 삭제

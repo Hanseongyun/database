@@ -1,0 +1,175 @@
+# 개념적 모델링
+1. 로그인 화면
+-아이디와 비밀번호를 입력하여 로그인
+-카카오, 네이버로 SNS 로그인을 할 수 있음
+
+2. 회원가입 화면
+-아이디, 비밀번호, 비밀번호확인, 이메일, 인증번호를 입력하여 회원가입
+-아이디에 대한 중복확인이 필요
+-이메일 인증을 통해서 인증코드를 지정한 이메일로 전송
+-전송받은 인증 코드를 입력하여 이메일 인증 처리를 함
+-카카오, 네이버로 SNS 회원가입을 할 수 있음
+
+3. QnA 게시판 목록 화면
+- 관리자 계정만 미완료 보기를 할 수 있음
+- 미완료 보기 체크시 답변이 미완료된 게시물을 조회
+- 게시물 목록은 하나의 아이템에 대하여 접수번호, 답변상태, 제목, 작성자 아이디, 작성일, 조회수를 보여줌 (접수번호 기준으로 내림차순 정렬하여 보여줌)
+- 게시물 제목으로 검색을 할 수 있음
+
+4. QnA 게시물 작성 화면
+- 제목, 내용을 작성할 수 있음
+
+5. 게시물 보기 화면
+- 제목, 작성자, 작성일, 조회수, 내용, 답변 내용을 조회
+- 만약 관리자로 로그인 상태이면 답변 내용으로 답변을 작성할 수 있음
+- 게시물을 삭제 할 수 있음
+
+6. 게시물 수정 화면
+-제목과 내용을 수정할 수 있음
+
+
+---- Entity, Attribute
+User (회원) - id, password, email, join_path, role, authentication_code
+QnA (qna 게시물) - reception_number, title, write_datetime, contents, view_count, writer_id, reply, reply_status
+
+---- Relationship
+User - QnA : 일반회원이 게시물을 작성한다.
+User - QnA : 관리자회원이 답변을 작성한다.
+
+
+# 논리적 모델링
+
+---- Table
+User
+   id VARCHAR(20) PRIMARY KEY,
+   password VARCHAR(13) NOT NULL,
+   email VARCHAR(50) NOT NULL UNIQUE,
+   join_path VARCHAR(5) NOT NULL DEFAULT 'HOME' CHECK( join_puth IN('HMOE', 'KAKAO', 'NAVER') ),
+   role VARCHAR(5) NOT NULL DEFAULT 'NOMAL' CHECK( role IN('ADMIN', 'NOMAL') )
+
+   # authentication_code VARCHAR(4) NOT NULL > 제거, 2정규화
+
+Email_Authentication
+   email VARCHAR(50) PRIMARY KEY,
+   authentication_code VARCHAR(4) NOT NULL
+
+
+QnA
+   reception_number INT PRIMARY KEY AUTO_INCREMENT,
+   title TEXT NOT NULL,
+   contents TEXT NOT NULL,
+   wirte_datetime DATETIME NOT NULL DEFAULT now(),
+   view_count INT NOT NULL DEFAULT 0,
+   writer_id VARCHAR(20) NOT NULL,
+   reply TEXT,
+   replyer VARCHAR(20),		#관계설정을 위해 추가함
+   reply_status BOOLEAN NOT NULL DEFAULT false
+
+
+# Reply	# 전체삭제 역정규화
+   reception_number INT,
+   replyer VARCHAR(20),
+   reply TEXT,
+   reply_status BOOLEAN NOT NULL DEFAULT false #
+
+
+---- Relationship
+User - QnA : 회원은 여러개의 게시물을 작성할 수 있고 게시물은 반드시 한 명의 회원에 의해 작성되어짐  1:n
+User - QnA : 관리자 회원은 여러개의 게시물에 답변을 작성할 수 있고 게시물은 한 명의 관리자에 의해 작성되어짐  1:n
+
+FK writer User (id) - QnA(writer_id)
+FK replyer User (id) - QnA(replyer)
+
+FK email_auth Email_authentication (email) - User (email)
+
+
+#물리적 모델링
+> 인덱스 걸기
+
+데이터베이스 - 포워드엔지니어
+
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema real_estate
+-- -----------------------------------------------------
+-- 부동산 가격 서비스 데이터베이스
+
+-- -----------------------------------------------------
+-- Schema real_estate
+--
+-- 부동산 가격 서비스 데이터베이스
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `real_estate` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
+USE `real_estate` ;
+
+-- -----------------------------------------------------
+-- Table `real_estate`.`email_authentication`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `real_estate`.`email_authentication` (
+  `email` VARCHAR(50) NOT NULL COMMENT '인증 이메일',
+  `authentication_code` VARCHAR(4) NOT NULL COMMENT '인증 코드',
+  PRIMARY KEY (`email`),
+  INDEX `authentication_idx` (`email` ASC, `authentication_code` ASC) COMMENT '인증 코드 확인 조회 속도 향상을 위한 인덱스' VISIBLE)
+ENGINE = InnoDB
+COMMENT = '이메일 인증 코드 테이블';
+
+
+-- -----------------------------------------------------
+-- Table `real_estate`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `real_estate`.`user` (
+  `user_id` VARCHAR(20) NOT NULL COMMENT '회원 아이디',
+  `password` VARCHAR(100) NOT NULL COMMENT '비밀번호',
+  `email` VARCHAR(50) NOT NULL COMMENT '회원 이메일',
+  `join_path` VARCHAR(5) NOT NULL DEFAULT 'HOME' COMMENT '가입 경로',
+  `role` VARCHAR(5) NOT NULL DEFAULT 'NOMAL',
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  CONSTRAINT `email_auth`
+    FOREIGN KEY (`email`)
+    REFERENCES `real_estate`.`email_authentication` (`email`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = '회원 테이블';
+
+
+-- -----------------------------------------------------
+-- Table `real_estate`.`qna`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `real_estate`.`qna` (
+  `reception_number` INT NOT NULL AUTO_INCREMENT COMMENT '접수 번호',
+  `title` VARCHAR(500) NOT NULL COMMENT '게시물 제목',
+  `contents` TEXT NOT NULL COMMENT '게시물 내용',
+  `wirte_datetime` DATETIME NOT NULL DEFAULT now() COMMENT '작성 날짜 및 시간',
+  `view_count` INT NOT NULL DEFAULT 0 COMMENT '조회수',
+  `writer_id` VARCHAR(20) NOT NULL COMMENT '작성자 아이디',
+  `replyer_id` VARCHAR(20) NULL COMMENT '답변자 아이디',
+  `reply` TEXT NULL COMMENT '답변 내용',
+  `reply_status` TINYINT NOT NULL DEFAULT 0 COMMENT '답변 상태',
+  PRIMARY KEY (`reception_number`),
+  INDEX `writer_idx` (`writer_id` ASC) VISIBLE,
+  INDEX `replyer_idx` (`replyer_id` ASC) VISIBLE,
+  INDEX `title_idx` (`title` ASC) COMMENT '제목 검색 속도 향상을 위한 인덱스' INVISIBLE,
+  CONSTRAINT `writer`
+    FOREIGN KEY (`writer_id`)
+    REFERENCES `real_estate`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `replyer`
+    FOREIGN KEY (`replyer_id`)
+    REFERENCES `real_estate`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'QnA 게시물 테이블';
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
