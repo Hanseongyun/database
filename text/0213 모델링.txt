@@ -44,7 +44,7 @@ User
    id VARCHAR(20) PRIMARY KEY,
    password VARCHAR(13) NOT NULL,
    email VARCHAR(50) NOT NULL UNIQUE,
-   join_path VARCHAR(5) NOT NULL DEFAULT 'HOME' CHECK( join_puth IN('HMOE', 'KAKAO', 'NAVER') ),
+   join_path VARCHAR(5) NOT NULL DEFAULT 'HOME' CHECK( join_puth IN('HOME', 'KAKAO', 'NAVER') ),
    role VARCHAR(5) NOT NULL DEFAULT 'NOMAL' CHECK( role IN('ADMIN', 'NOMAL') )
 
    # authentication_code VARCHAR(4) NOT NULL > 제거, 2정규화
