@@ -1,4 +1,4 @@
-# DDL 구조
+	# DDL 구조
 생성 : CREATE
 삭제 : DROP
 수정 : ALTER 

@@ -36,6 +36,11 @@ QnA (qna 게시물) - reception_number, title, write_datetime, contents, view_co
 User - QnA : 일반회원이 게시물을 작성한다.
 User - QnA : 관리자회원이 답변을 작성한다.
 
+1:N N에 참조키생성
+N:M 새로운테이블
+
+
+
 
 # 논리적 모델링
 
@@ -137,6 +142,29 @@ CREATE TABLE IF NOT EXISTS `real_estate`.`user` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 COMMENT = '회원 테이블';
+
+
+board : 게시물번호(board_number), 게시물 제목(title), 게시물 내용(contents), 조회수(view_count), 댓글수(comment_count), 
+좋아요수(favorite_count), 게시물 작성일(write_datetime), 작성자 이메일(writer_email), 
+
+user : 작성자 프로필 사진(writer_profile_image), 작성자 닉네임(writer_nickname)
+
+
+게시물번호(board_number), 게시물 제목(title), 게시물 내용(contents), 조회수(view_count), 댓글수(comment_count), 
+좋아요수(favorite_count), 게시물 작성일(write_datetime), 작성자 이메일(writer_email), 
+작성자 프로필 사진(writer_profile_image), 작성자 닉네임(writer_nickname)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- -----------------------------------------------------
